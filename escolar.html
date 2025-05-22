@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Escolar - Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            animation: fadeIn 0.6s ease-in-out;
+        }
+
+        .login-container h2 {
+            margin-bottom: 20px;
+            font-size: 28px;
+            font-weight: 600;
+            color: #ffffff;
+            text-shadow: 2px 2px 10px rgba(0, 255, 255, 0.5);
+        }
+
+        .login-container form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .login-container label {
+            text-align: left;
+            font-weight: 600;
+            color: #ddd;
+            margin-bottom: 5px;
+        }
+
+        .login-container input, .login-container select {
+            padding: 12px;
+            margin-bottom: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.2);
+            color: #201515;
+            transition: 0.3s;
+            outline: none;
+        }
+
+        .login-container input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .login-container input:focus, .login-container select:focus {
+            border: 2px solid cyan;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .login-container button {
+            padding: 12px;
+            background: linear-gradient(90deg, #00c6ff, #0072ff);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 255, 255, 0.4);
+        }
+
+        .login-container button:hover {
+            background: linear-gradient(90deg, #0072ff, #00c6ff);
+            transform: scale(1.05);
+        }
+
+        .register {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #fff;
+        }
+
+        .register a {
+            color: cyan;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .register a:hover {
+            text-decoration: underline;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>Bem-vindo ao Sistema Escolar</h2>
+        <form id="login-form" onsubmit="return validateLogin(event)">
+            <label for="user-type">Tipo de Usuário:</label>
+            <select id="user-type" name="user-type" required>
+                <option value="user">Usuário (RA)</option>
+                <option value="admin">Administrador</option>
+            </select>
+            
+            <label for="username">Usuário (RA ou Admin):</label>
+            <input type="text" id="username" name="username" placeholder="Digite seu RA ou usuário" required>
+            
+            <label for="password">Senha:</label>
+            <input type="password" id="password" name="password" placeholder="Digite sua senha" required>
+            
+            <button type="submit">Entrar</button>
+        </form>
+        
+        <p class="register">Não tem uma conta? <a href="#">Registre-se</a></p>
+    </div>
+
+    <script>
+        function validateLogin(event) {
+            event.preventDefault();
+            const validUsers = { '123': '123', '789012': 'senha456' };
+            const validAdminUsers = { 'admin': 'admin123' };
+
+            const userType = document.getElementById('user-type').value;
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (userType === 'user' && validUsers[username] && validUsers[username] === password) {
+                alert("Login de usuário bem-sucedido!");
+                window.location.href = "Index.html";
+            } else if (userType === 'admin' && validAdminUsers[username] && validAdminUsers[username] === password) {
+                alert("Login de administrador bem-sucedido!");
+                window.location.href = "admin.php";
+            } else {
+                alert("Usuário ou senha inválidos!");
+            }
+        }
+    </script>
+</body>
+</html>

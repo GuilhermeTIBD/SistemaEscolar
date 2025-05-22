@@ -1,0 +1,22 @@
+function markPresence(alunoId, status) {
+    fetch(`http://localhost:3000/alunos/${alunoId}/presenca`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: status })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Resposta do servidor:', data);  // Adicionei este log para depuração
+        if (data.success) {
+            alert(`Presença marcada como ${status} para o aluno ${data.nome}`);
+        } else {
+            alert('Erro ao marcar presença: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Erro ao marcar presença:', error);
+        alert('Erro ao marcar presença');
+    });
+}

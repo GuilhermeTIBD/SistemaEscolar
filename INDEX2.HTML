@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão Escolar - Presenças</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* Reset básico */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Corpo da página */
+        body {
+            background: #f4f4f4;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            height: 100vh;
+            margin: 0;
+            font-size: 16px;
+        }
+
+        /* Container principal */
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin-top: 20px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        /* Título principal */
+        header h1 {
+            font-size: 32px;
+            color: #007b7f;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* Barra lateral */
+        .sidebar {
+            background: #007b7f;
+            color: #fff;
+            width: 200px;
+            height: calc(100vh - 40px);
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .sidebar h3 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        .sidebar a {
+            font-size: 18px;
+            color: #fff;
+            text-decoration: none;
+            padding: 10px;
+            display: block;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .sidebar a:hover {
+            background: #00b4b4;
+            transform: translateX(5px);
+        }
+
+        /* Conteúdo principal */
+        .content {
+            margin-left: 220px;
+            padding: 20px;
+        }
+
+        .content .table-container {
+            margin-top: 30px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: center;
+            font-size: 16px;
+            color: #555;
+        }
+
+        th {
+            background-color: #007b7f;
+            color: white;
+            text-transform: uppercase;
+        }
+
+        tr:nth-child(even) td {
+            background: #f2f2f2;
+        }
+
+        tr:hover td {
+            background-color: #e3f2f2;
+        }
+
+        button {
+            background: #007b7f;
+            color: #fff;
+            font-size: 16px;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 30px;
+            display: block;
+            width: 200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        button:hover {
+            background: #00b4b4;
+        }
+
+        /* Responsividade */
+        @media screen and (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                top: 0;
+                margin-bottom: 20px;
+            }
+
+            .content {
+                margin-left: 0;
+            }
+
+            header h1 {
+                font-size: 28px;
+            }
+
+            button {
+                width: 100%;
+                padding: 12px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Barra Lateral -->
+<div class="sidebar">
+    <h3>Gestão Escolar</h3>
+    <!-- Links das turmas serão carregados aqui -->
+</div>
+
+<!-- Conteúdo principal -->
+<div class="container">
+    <header>
+        <h1>Presenças da Turma</h1>
+    </header>
+
+    <div class="content">
+        <div id="content">
+            <!-- Dados de presenças serão carregados dinamicamente -->
+            <h2>Carregando dados...</h2>
+        </div>
+
+        <!-- Botão para voltar ao dashboard -->
+        <button onclick="voltarDashboard()">Voltar ao Dashboard</button>
+    </div>
+</div>
+
+<footer style="text-align: center; margin-top: 40px; font-size: 14px;">
+    <p>&copy; 2025 Gestão Escolar | Todos os direitos reservados.</p>
+</footer>
+
+<script>
+    // Função para buscar as turmas do banco de dados
+    async function fetchTurmas() {
+        try {
+            const response = await fetch('http://localhost:3000/turmas');
+            const turmas = await response.json();
+
+            const sidebar = document.querySelector('.sidebar');
+            turmas.forEach(turma => {
+                const link = document.createElement('a');
+                link.href = '#';
+                link.innerText = turma.nome;
+                link.onclick = () => fetchPresencas(turma.id);
+                sidebar.appendChild(link);
+            });
+        } catch (error) {
+            console.error('Erro ao carregar turmas:', error);
+            document.getElementById('sidebar').innerHTML = 'Erro ao carregar turmas.';
+        }
+    }
+
+    // Função para buscar presenças de uma turma específica
+    async function fetchPresencas(turmaId) {
+        try {
+            const response = await fetch(`http://localhost:3000/presencasPorTurma?turma_id=${turmaId}`);
+            const data = await response.json();
+
+            let tableContent = ` 
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Aluno</th>
+                                <th>Status</th>
+                                <th>Data</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            data.forEach(presenca => {
+                tableContent += ` 
+                    <tr>
+                        <td>${presenca.aluno_nome}</td>
+                        <td>${presenca.status}</td>
+                        <td>${presenca.data}</td>
+                    </tr>
+                `;
+            });
+
+            tableContent += `</tbody></table></div>`;
+            document.getElementById('content').innerHTML = tableContent;
+        } catch (error) {
+            console.error('Erro ao buscar presenças:', error);
+            document.getElementById('content').innerHTML = 'Erro ao carregar as presenças.';
+        }
+    }
+    function registrarPresenca(alunoId, status) {
+    $.ajax({
+        url: 'registrar_presenca.php',  // Arquivo PHP que processará a presença
+        type: 'POST',
+        data: {
+            aluno_id: alunoId,
+            status: status
+        },
+        success: function(response) {
+            console.log("Resposta do servidor:", response);  // Para depuração
+            alert(response);  // Exibe a resposta do servidor (mensagem de sucesso ou erro)
+        },
+        error: function(xhr, status, error) {
+            console.error("Erro ao registrar presença:", error);
+            alert("Erro ao registrar presença.");
+        }
+    });
+}
+
+    // Função para redirecionar para o dashboard
+    function voltarDashboard() {
+        window.location.href = 'index.html'; // Substitua pelo caminho correto do seu dashboard
+    }
+
+    // Carregar as turmas quando a página for carregada
+    window.onload = fetchTurmas;
+    // Função para buscar presenças de uma turma específica e separá-las por data
+async function fetchPresencas(turmaId) {
+    try {
+        const response = await fetch(`http://localhost:3000/presencasPorTurma?turma_id=${turmaId}`);
+        const data = await response.json();
+
+        let groupedData = {};
+        data.forEach(presenca => {
+            if (!groupedData[presenca.data]) {
+                groupedData[presenca.data] = [];
+            }
+            groupedData[presenca.data].push(presenca);
+        });
+
+        let tableContent = `<div class="table-container">`;
+        
+        for (const data in groupedData) {
+            tableContent += `
+                <h3 style="margin-top: 20px; color: #007b7f;">${data}</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Aluno</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            groupedData[data].forEach(presenca => {
+                tableContent += `
+                    <tr>
+                        <td>${presenca.aluno_nome}</td>
+                        <td>${presenca.status}</td>
+                    </tr>
+                `;
+            });
+
+            tableContent += `</tbody></table>`;
+        }
+
+        tableContent += `</div>`;
+        document.getElementById('content').innerHTML = tableContent;
+    } catch (error) {
+        console.error('Erro ao buscar presenças:', error);
+        document.getElementById('content').innerHTML = 'Erro ao carregar as presenças.';
+    }
+}
+
+</script>
+<div vw class="enabled">
+    <div vw-access-button class="active"></div>
+    <div vw-plugin-wrapper>
+      <div class="vw-plugin-top-wrapper"></div>
+    </div>
+  </div>
+  <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+  <script>
+    new window.VLibras.Widget('https://vlibras.gov.br/app');
+  </script>
+</body>
+</html>
