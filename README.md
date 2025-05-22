@@ -44,11 +44,6 @@ O sistema está finalizado e funcionando, mas novas melhorias e funcionalidades 
 
 ---
 
-## 📷 Capturas de Tela
-
-*(Você pode adicionar prints aqui para mostrar o sistema em funcionamento)*
-
----
 
 ## 📬 Contato
 
